@@ -1596,6 +1596,8 @@ void MainWindow::qmChannel_aboutToShow() {
 	qmChannel->addAction(qaChannelUnlink);
 	qmChannel->addAction(qaChannelUnlinkAll);
 	qmChannel->addSeparator();
+	qmChannel->addAction(qaChannelKickAll);
+	qmChannel->addSeparator();
 	qmChannel->addAction(qaChannelCopyURL);
 	qmChannel->addAction(qaChannelSendMessage);
 

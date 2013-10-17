@@ -422,6 +422,17 @@
     <string>This unlinks your current channel (not the selected one) from all linked channels.</string>
    </property>
   </action>
+  <action name="qaChannelKickAll">
+   <property name="text">
+    <string>&amp;Kick All</string>
+   </property>
+   <property name="toolTip">
+    <string>Kicks everyone in this channel off the server.</string>
+   </property>
+   <property name="whatsThis">
+    <string>This kicks everyone in the selected channel.</string>
+   </property>
+  </action>
   <action name="qaAudioReset">
    <property name="text">
     <string>&amp;Reset</string>
