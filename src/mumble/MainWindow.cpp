@@ -1597,6 +1597,7 @@ void MainWindow::qmChannel_aboutToShow() {
 	qmChannel->addAction(qaChannelUnlinkAll);
 	qmChannel->addSeparator();
 	qmChannel->addAction(qaChannelKickAll);
+	qmChannel->addAction(qaChannelScatter);
 	qmChannel->addSeparator();
 	qmChannel->addAction(qaChannelCopyURL);
 	qmChannel->addAction(qaChannelSendMessage);
@@ -1656,6 +1657,8 @@ void MainWindow::qmChannel_aboutToShow() {
 	qaChannelLink->setEnabled(link);
 	qaChannelUnlink->setEnabled(unlink);
 	qaChannelUnlinkAll->setEnabled(unlinkall);
+	qaChannelKickAll->setEnabled(add);
+	qaChannelScatter->setEnabled(add);
 	qaChannelSendMessage->setEnabled(msg);
 	updateMenuPermissions();
 }
@@ -1763,6 +1766,42 @@ void MainWindow::on_qaChannelUnlinkAll_triggered() {
 	foreach(Channel *l, c->qsPermLinks)
 		mpcs.add_links_remove(l->iId);
 	g.sh->sendMessage(mpcs);
+}
+
+void MainWindow::on_qaChannelKickAll_triggered() {
+	Channel *c = getContextMenuChannel();
+
+	if(!c)
+		return;
+	
+	QString msg = tr("Kicking all users in %1...").arg(c->qsName);
+	int id = c->iId;
+		
+	c = Channel::get(id);
+
+	if (c) {
+		// Channel message
+		if (!g.s.bChatBarUseSelection || c == NULL) // If no channel selected fallback to current one
+			c = ClientUser::get(g.uiSession)->cChannel;
+
+		bool ok;
+		QString reason = QInputDialog::getText(this, tr("Kicking users in %1").arg(c->qsName), tr("Enter reason"), QLineEdit::Normal, QString(), &ok);
+		
+		if(ok)
+		{
+			g.sh->sendChannelTextMessage(c->iId, msg, false);
+			g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatChannel(c), msg), tr("Message to channel %1").arg(c->qsName), true);
+			
+			foreach(User* u, c->qlUsers) {
+				unsigned int session = u->uiSession;
+				ClientUser* cu = ClientUser::get(session);
+				if (!cu)
+					continue;
+
+				g.sh->kickBanUser(cu->uiSession, reason, false);			
+			}
+		}
+	}
 }
 
 void MainWindow::on_qaChannelSendMessage_triggered() {
@@ -1889,6 +1928,9 @@ void MainWindow::updateMenuPermissions() {
 	qaChannelLink->setEnabled((p & (ChanACL::Write | ChanACL::LinkChannel)) && (homep & (ChanACL::Write | ChanACL::LinkChannel)));
 	qaChannelUnlink->setEnabled((p & (ChanACL::Write | ChanACL::LinkChannel)) || (homep & (ChanACL::Write | ChanACL::LinkChannel)));
 	qaChannelUnlinkAll->setEnabled(p & (ChanACL::Write | ChanACL::LinkChannel));
+	
+	qaChannelKickAll->setEnabled(p & (ChanACL::Write | ChanACL::Kick));
+	qaChannelScatter->setEnabled(p & (ChanACL::Write | ChanACL::Move));
 
 	qaChannelSendMessage->setEnabled(p & (ChanACL::Write | ChanACL::TextMessage));
 	qaChannelFilter->setEnabled(true);

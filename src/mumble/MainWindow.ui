@@ -433,6 +433,17 @@
     <string>This kicks everyone in the selected channel.</string>
    </property>
   </action>
+  <action name="qaChannelScatter">
+   <property name="text">
+    <string>&amp;Scatter Users</string>
+   </property>
+   <property name="toolTip">
+    <string>Scatters everyone in this channel to random channels on the server.</string>
+   </property>
+   <property name="whatsThis">
+    <string>This moves everyone in the selected channel to random channels on the server.</string>
+   </property>
+  </action>
   <action name="qaAudioReset">
    <property name="text">
     <string>&amp;Reset</string>
