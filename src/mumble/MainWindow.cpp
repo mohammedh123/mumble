@@ -1804,6 +1804,43 @@ void MainWindow::on_qaChannelKickAll_triggered() {
 	}
 }
 
+void MainWindow::on_qaChannelScatter_triggered() {
+	Channel *c = getContextMenuChannel();
+	Channel *root = Channel::get(0);
+
+	if(!c)
+		return;
+	
+	QString msg = tr("Scattering all users in %1...").arg(c->qsName);
+	int id = c->iId;
+		
+	c = Channel::get(id);
+
+	if (c) {
+		// Channel message
+		if (!g.s.bChatBarUseSelection || c == NULL) // If no channel selected fallback to current one
+			c = ClientUser::get(g.uiSession)->cChannel;
+
+	
+		g.sh->sendChannelTextMessage(c->iId, msg, false);
+		g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatChannel(c), msg), tr("Message to channel %1").arg(c->qsName), true);
+		
+		foreach(User* u, c->qlUsers) {
+			unsigned int session = u->uiSession;
+			ClientUser* cu = ClientUser::get(session);
+			if (!cu)
+				continue;
+				
+			int randomIdx = rand() % (root->qlChannels.size()-1);
+		
+			MumbleProto::UserState mpus;
+			mpus.set_session(session);
+			mpus.set_channel_id(root->qlChannels[randomIdx]->iId);
+			g.sh->sendMessage(mpus); 	
+		}		
+	}
+}
+
 void MainWindow::on_qaChannelSendMessage_triggered() {
 	Channel *c = getContextMenuChannel();
 

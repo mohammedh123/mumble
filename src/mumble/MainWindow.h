@@ -210,6 +210,7 @@ class MainWindow : public QMainWindow, public MessageHandler, public Ui::MainWin
 		void on_qaChannelUnlink_triggered();
 		void on_qaChannelUnlinkAll_triggered();
 		void on_qaChannelKickAll_triggered();
+		void on_qaChannelScatter_triggered();
 		void on_qaChannelSendMessage_triggered();
 		void on_qaChannelFilter_triggered();
 		void on_qaChannelCopyURL_triggered();
